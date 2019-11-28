@@ -1,7 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import styled from 'styled-components/native';
 
-import styled from 'styled-components';
+
+if(__DEV__) {
+  import('./ReactotronConfig').then(() => console.log('Reactotron Configured'))
+}
+
+import MessageBox from './message-box'
 
 const Container = styled.View`
 	flex: 1;
@@ -20,6 +26,8 @@ export default function App() {
   return (
     <Container>
       <Title>Open up App.tsx to start working on your app!</Title>
+      <View style={{ flex: 1 }}/>
+      <MessageBox/>
     </Container>
   );
 }
