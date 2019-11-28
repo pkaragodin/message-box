@@ -15,7 +15,7 @@ import * as FileSystem from 'expo-file-system';
 
 import styled from 'styled-components/native';
 
-import {sentIcon, sentIconWhite, stopIcon, voiceIcon} from "./assets";
+import {sendIcon, sendIconWhite, stopIcon, voiceIcon} from "./assets";
 import {PlaybackStatus} from "expo-av/build/AV";
 
 interface IconContainerProps {
@@ -360,6 +360,7 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
  render(){
     const { m, s } = this.millsToTime(this.state.recordingDuration)
    return  <IconContainer
+     style={{ zIndex: this.state.pressed && 100000 }}
      {...(!this.state.locked && this._panResponder.panHandlers)}
    >
 
@@ -454,7 +455,7 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
        left: -48,
        backgroundColor: '#0062FF'
      }}>
-       <IconImage source={this.state.locked ? sentIconWhite : voiceIcon} />
+       <IconImage source={this.state.locked ? sendIconWhite : voiceIcon} />
      </View>
        </TouchableWithoutFeedback>
      }

@@ -1,26 +1,16 @@
 import React,{ useState, useRef } from 'react';
 import {
-  StyleSheet, Text, View, TextInput,
-  KeyboardAvoidingView,
-  TextInputProps, TouchableWithoutFeedback,
-  PanResponder
+  StyleSheet, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard
 } from 'react-native';
 
-import {
-  GestureHandlerGestureEvent,
-  PanGestureHandler,
-  PanGestureHandlerGestureEvent,
-  TapGestureHandler, TapGestureHandlerGestureEvent,
-  TapGestureHandlerProperties,
-  State as GestureStateEnum,
-  LongPressGestureHandler, LongPressGestureHandlerStateChangeEvent
-} from 'react-native-gesture-handler';
 
 import styled from 'styled-components/native';
 
-import {attachIcon, voiceIcon, sentIcon } from "./assets";
-
 import { VoiceRecordControl } from './voice-record-control'
+
+import { PickerControl  } from './picker-control'
+import {sendIcon} from "./assets";
+
 
 
 const Container = styled.View`
@@ -42,8 +32,6 @@ const IconContainer = styled.View`
  justify-content: flex-end;
 `
 
-const IconTouchable = styled.TouchableWithoutFeedback``
-
 const IconImage = styled.Image`
   width: 32px;
   height: 32px;
@@ -51,57 +39,60 @@ const IconImage = styled.Image`
   resizeMode: contain;
 `
 
+export enum MessageType{
+  IMAGE = 'image',
+  VIDEO = 'video',
+  VOICE = 'voice',
+  TEXT = 'text'
+}
 
+export interface BaseMessageInterface {
+  type: MessageType
+}
 
+export interface ImageMessageInterface extends BaseMessageInterface{
+  width: number;
+  height:number;
+  uri: string;
+}
 
-export interface MessageBoxProps {
+export interface VideoMessageInterface extends BaseMessageInterface{
+  width: number;
+  height:number;
+  uri: string;
+  duration: number;
+}
 
+export interface TextMessageInterface extends BaseMessageInterface {
+  text: string
 }
 
 
+export interface MessageBoxProps {
+  onSendMessage: (message:BaseMessageInterface) => void
+}
 
-export const MessageBox: React.FC<MessageBoxProps> = (props) => {
+export const MessageBox: React.FC<MessageBoxProps> = ({ onSendMessage }) => {
   const [messageText, setMessageText] = useState('')
-/*  const gestureEventHandler = (e:TapGestureHandlerGestureEvent) =>{
-     console.log('e',e);
-    switch (e.nativeEvent.state) {
-      case GestureStateEnum.ACTIVE: console.log('_active'); break;
-      case GestureStateEnum.BEGAN: console.log('_began'); break;
-      case GestureStateEnum.CANCELLED: console.log('_cancelled'); break;
-      case GestureStateEnum.END: console.log('_end'); break;
-      case GestureStateEnum.FAILED: console.log('_failed'); break;
-      case GestureStateEnum.UNDETERMINED: console.log('_undetermined'); break;
-    }
-
+  const handlePickImageOrVideo = (payload: ImageMessageInterface | VideoMessageInterface) =>{
+      onSendMessage && onSendMessage(payload);
   }
-
-  const tapHandlerStateChange = (e:TapGestureHandlerGestureEvent) =>{
-    // console.log('tap',e, e.nativeEvent.state);
-    switch (e.nativeEvent.state) {
-      case GestureStateEnum.ACTIVE: console.log('active'); break;
-      case GestureStateEnum.BEGAN: console.log('began'); break;
-      case GestureStateEnum.CANCELLED: console.log('cancelled'); break;
-      case GestureStateEnum.END: console.log('end'); break;
-      case GestureStateEnum.FAILED: console.log('failed'); break;
-      case GestureStateEnum.UNDETERMINED: console.log('undetermined'); break;
+  const handlePressSendTextMessage = () => {
+    Keyboard.dismiss();
+    const message: TextMessageInterface = {
+      type: MessageType.TEXT,
+      text: messageText
     }
-  }*/
-
-  //console.log('render')
-  //const r = useRef()
-
-
+    onSendMessage && onSendMessage(message)
+  }
   return <KeyboardAvoidingView
     behavior="position"
     style={styles.container}
     contentContainerStyle={styles.contentContainer}
     enabled>
 
-    <IconContainer>
-    <IconTouchable onPress={()=>{}}>
-      <IconImage source={attachIcon}/>
-    </IconTouchable>
-    </IconContainer>
+    <PickerControl onPicked={handlePickImageOrVideo}/>
+
 
     <MessageTextInput
       placeholder="Сообщение..."
@@ -111,14 +102,17 @@ export const MessageBox: React.FC<MessageBoxProps> = (props) => {
       value={messageText}
     />
 
-   {/* <IconContainer {...panResponder.panHandlers}>
-        <IconImage source={messageText.length >  0 ? sentIcon : voiceIcon }/>
-    </IconContainer>
-*/}
-
-    <VoiceRecordControl/>
-
+    {messageText.length > 0 ?
+      <TouchableWithoutFeedback onPress={handlePressSendTextMessage}>
+        <IconContainer>
+          <IconImage source={sendIcon}/>
+        </IconContainer>
+      </TouchableWithoutFeedback>
+      :
+      <VoiceRecordControl/>
+    }
   </KeyboardAvoidingView>
+
 }
 
 const styles = StyleSheet.create({

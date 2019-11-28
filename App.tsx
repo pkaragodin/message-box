@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import styled from 'styled-components/native';
 
 
+/*
 if(__DEV__) {
   import('./ReactotronConfig').then(() => console.log('Reactotron Configured'))
 }
+*/
 
 import MessageBox from './message-box'
 
@@ -19,15 +21,25 @@ const Container = styled.View`
 const Title = styled.Text`
 	font-size: 24px;
 	font-weight: 500;
-	color: palevioletred;
+	color: blue;
 `;
 
 export default function App() {
+  const [message, setMessage] = useState(null)
   return (
     <Container>
       <Title>Open up App.tsx to start working on your app!</Title>
+      {message &&
+      <Text>
+        {JSON.stringify(message, null, 2)}
+      </Text>
+      }
+
       <View style={{ flex: 1 }}/>
-      <MessageBox/>
+      <MessageBox onSendMessage={(message => {
+        console.log('send message', message);
+        setMessage(message);
+      })}/>
     </Container>
   );
 }
