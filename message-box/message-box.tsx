@@ -1,7 +1,9 @@
 import React, {useState, useRef, Fragment} from 'react';
 import {
-  StyleSheet, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, View, Platform
+  StyleSheet, KeyboardAvoidingView,
+  TouchableWithoutFeedback, Keyboard, View, Platform, TextInput
 } from 'react-native';
+
 
 
 import styled from 'styled-components/native';
@@ -130,6 +132,7 @@ export interface MessageBoxProps {
 }
 
 export const MessageBox: React.FC<MessageBoxProps> = ({ onSendMessage }) => {
+  const textInputRef = React.createRef<TextInput>()
   const [messageText, setMessageText] = useState('')
   const handlePickImageOrVideo = (payload: ImageMessageInterface | VideoMessageInterface) =>{
       onSendMessage && onSendMessage(payload);
@@ -153,6 +156,7 @@ export const MessageBox: React.FC<MessageBoxProps> = ({ onSendMessage }) => {
 
 
     <MessageTextInput
+      ref={textInputRef}
       placeholder="Сообщение..."
       multiline={true}
       onSubmitEditing={Keyboard.dismiss}
@@ -160,7 +164,6 @@ export const MessageBox: React.FC<MessageBoxProps> = ({ onSendMessage }) => {
       onChangeText={setMessageText}
       value={messageText}
     />
-
 
     <ButtonContainer>
     {messageText.length > 0 ?
