@@ -86,8 +86,10 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
     //  selectPanelRef.current.hide();
     }
   },[isSelectPanelVisible])
-  const handleToggleSelectPanel = () =>
+  const handleToggleSelectPanel = () => {
+    setIsSelectPanelVisible(false)
     setIsSelectPanelVisible(!isSelectPanelVisible)
+  }
 
 
   const [cameraPermissionGranted,
@@ -103,7 +105,7 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
       })
     }
     if(pickingCamera && cameraPermissionGranted) {
-      setIsSelectPanelVisible(false)
+
       launchCamera().then(result => {
         !result.cancelled && onPicked && onPicked(result as Message)
       }).catch(e => {
@@ -113,11 +115,18 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
       })
     }
   },[pickingCamera, cameraPermissionGranted])
-  const handlePickCamera = () => setPickingCamera(true)
+
+  const handlePickCamera = async () => {
+    setIsSelectPanelVisible(false)
+    await new Promise((resolve => setTimeout(()=>resolve(), 0)))
+    setPickingCamera(true)
+  }
 
   const [cameraRollPermissionGranted,
     setCameraRollPermissionGranted] = useState(false)
   const [pickingCameraRoll, setPickingCameraRoll] = useState(false)
+
+
   useEffect(()=>{
     if(!cameraRollPermissionGranted){
       getPhotoLibraryPermissionAsync()
@@ -128,7 +137,7 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
       })
     }
     if(pickingCameraRoll && cameraRollPermissionGranted) {
-      setIsSelectPanelVisible(false)
+      //setIsSelectPanelVisible(false)
       launchImageLibrary().then(result => {
         !result.cancelled && onPicked && onPicked(result as Message)
       }).catch(e => {
@@ -138,18 +147,26 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
       })
     }
   },[pickingCameraRoll, cameraRollPermissionGranted])
-  const handlePickCameraRoll = () => setPickingCameraRoll(true)
+
+  const handlePickCameraRoll = async () => {
+    setIsSelectPanelVisible(false)
+    // вероятно грязный хак но возникает какая-то коллизия при скрытии
+    // модалки селектора и модалки камеры/библиотеки картинок
+    await new Promise((resolve => setTimeout(()=>resolve(), 0)))
+    setPickingCameraRoll(true)
+  }
 
   return (<Container>
             <Button onPress={handleToggleSelectPanel}>
               <IconImage source={attachIcon}/>
             </Button>
-            {/* <SelectPanel ref={selectPanelRef}
+             <SelectPanel
+               // ref={selectPanelRef}
                           isVisible={isSelectPanelVisible}
                    onRequestCameraRoll={handlePickCameraRoll}
                    onRequestCamera={handlePickCamera}
                    onRequestToggleSelectPanel={handleToggleSelectPanel}
-             />*/}
+             />
           </Container>
   )
 }

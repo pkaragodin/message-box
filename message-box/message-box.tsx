@@ -155,6 +155,7 @@ export const MessageBox: React.FC<MessageBoxProps> = ({ onSendMessage }) => {
     <MessageTextInput
       placeholder="Сообщение..."
       multiline={true}
+      onSubmitEditing={Keyboard.dismiss}
       placeholderTextColor="#a8a8a8"
       onChangeText={setMessageText}
       value={messageText}
@@ -184,6 +185,5 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexDirection:'row',
     backgroundColor:'#ffffff',
-    zIndex: 10000,
   }
 })

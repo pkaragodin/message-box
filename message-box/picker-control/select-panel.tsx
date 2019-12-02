@@ -1,14 +1,17 @@
 import React from "react";
 import SlidingUpPanel from "rn-sliding-up-panel";
-import { Dimensions, Text, View} from "react-native";
+import { Dimensions, Text, View, Modal, TouchableWithoutFeedback} from "react-native";
 import styled from "styled-components/native";
-import { BorderlessButton } from 'react-native-gesture-handler';
+
 
 const panelHeight = 176;
 
-const Button = styled(BorderlessButton)`
-  width: 100%;
+const ButtonTouchable = styled(TouchableWithoutFeedback)`
+`
+const Button = styled.View`
+width: 100%;
   height: 48px;
+  max-height: 48px;
   justify-content: center;
   align-items: center;
   background-color: #ffffff;
@@ -24,15 +27,50 @@ const PanelContent = styled.View`
         width: ${Dimensions.get('screen').width};
         padding-top: 16px;
         padding-bottom: 16px;
+        background-color: #ffffff;
+`
+const Container = styled.View`
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
 `
 
 export interface SelectPanelProps {
-  ref: React.Ref<SlidingUpPanel>
+ // ref: React.Ref<SlidingUpPanel>
   onRequestToggleSelectPanel: () => void
   onRequestCamera: () => void
   onRequestCameraRoll: () => void
   isVisible?: boolean;
 }
+
+export const SelectPanel: React.FC<SelectPanelProps> = (props) =>
+  <Modal
+    animationType="slide"
+    transparent={true}
+    visible={props.isVisible}
+    hardwareAccelerated={true}
+  >
+    <Container>
+    <PanelContent>
+      <ButtonTouchable onPress={props.onRequestCamera}>
+        <Button>
+        <ButtonText>Камера</ButtonText>
+        </Button>
+      </ButtonTouchable>
+      <ButtonTouchable onPress={props.onRequestCameraRoll}>
+        <Button>
+        <ButtonText>Фото или видео</ButtonText>
+        </Button>
+      </ButtonTouchable>
+      <ButtonTouchable style={{ marginTop: 16 }} onPress={props.onRequestToggleSelectPanel}>
+        <Button>
+        <ButtonText>Отмена</ButtonText>
+        </Button>
+      </ButtonTouchable>
+    </PanelContent>
+    </Container>
+  </Modal>
+/*
 export const SelectPanel:React.FC<SelectPanelProps> =
   React.forwardRef<SlidingUpPanel, SelectPanelProps>((props, ref) => (
     <SlidingUpPanel
@@ -56,3 +94,4 @@ export const SelectPanel:React.FC<SelectPanelProps> =
       </PanelContent>
     </SlidingUpPanel>
   ));
+*/
