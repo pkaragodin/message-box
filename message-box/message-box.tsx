@@ -127,12 +127,19 @@ export interface VoiceMessage extends BaseMessageInterface{
 }
 
 
+enum MessageBoxStatusEnum{
+  DEFAULT = 'default',
+  VOICE = 'voice',
+  PICKER = 'picker',
+}
+
 export interface MessageBoxProps {
   onSendMessage: (message:BaseMessageInterface) => void
 }
 
 export const MessageBox: React.FC<MessageBoxProps> = ({ onSendMessage }) => {
   const textInputRef = React.createRef<TextInput>()
+  const [status, setStatus] = useState<MessageBoxStatusEnum>(MessageBoxStatusEnum.DEFAULT)
   const [messageText, setMessageText] = useState('')
   const handlePickImageOrVideo = (payload: ImageMessageInterface | VideoMessageInterface) =>{
       onSendMessage && onSendMessage(payload);
@@ -145,6 +152,10 @@ export const MessageBox: React.FC<MessageBoxProps> = ({ onSendMessage }) => {
     }
     onSendMessage && onSendMessage(message)
   }
+  const handleChangeStatusVoiceActive = () =>
+    status!==MessageBoxStatusEnum.VOICE && setStatus(MessageBoxStatusEnum.VOICE)
+  const handleChangeStatusDefault = () =>
+    status!==MessageBoxStatusEnum.DEFAULT && setStatus(MessageBoxStatusEnum.DEFAULT)
   return <AndroidWrapper>
     <KeyboardAvoidingView
     behavior="position"
@@ -154,16 +165,16 @@ export const MessageBox: React.FC<MessageBoxProps> = ({ onSendMessage }) => {
 
     <PickerControl onPicked={handlePickImageOrVideo}/>
 
-
-    <MessageTextInput
-      ref={textInputRef}
-      placeholder="Сообщение..."
-      multiline={true}
-      onSubmitEditing={Keyboard.dismiss}
-      placeholderTextColor="#a8a8a8"
-      onChangeText={setMessageText}
-      value={messageText}
-    />
+      {status === MessageBoxStatusEnum.DEFAULT ?
+      <MessageTextInput
+        ref={textInputRef}
+        placeholder="Сообщение..."
+        multiline={true}
+        onSubmitEditing={Keyboard.dismiss}
+        placeholderTextColor="#a8a8a8"
+        onChangeText={setMessageText}
+        value={messageText}
+      /> : <View style={{ flex: 1}}/>}
 
     <ButtonContainer>
     {messageText.length > 0 ?
@@ -173,7 +184,11 @@ export const MessageBox: React.FC<MessageBoxProps> = ({ onSendMessage }) => {
         </SendIconContainer>
       </SendButtonContainer>
       :
-      <VoiceRecordControl onSendMessage={onSendMessage}/>
+      <VoiceRecordControl
+        onActive={handleChangeStatusVoiceActive}
+        onPassive={handleChangeStatusDefault}
+        onSendMessage={onSendMessage}
+      />
     }
     </ButtonContainer>
   </KeyboardAvoidingView>

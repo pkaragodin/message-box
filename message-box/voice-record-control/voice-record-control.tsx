@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 
-import {Animated, Dimensions, PanResponder, View} from 'react-native';
+import {Animated, Dimensions, PanResponder, View, Text} from 'react-native';
 
 import {Audio} from 'expo-av';
 
@@ -16,6 +16,8 @@ import {deleteIcon, pauseIcon, playIcon, sendIconWhite, stopIcon, voiceIcon} fro
 import {PlaybackStatus} from "expo-av/build/AV";
 import {BorderlessButton} from 'react-native-gesture-handler';
 import {MessageType, VoiceMessage} from "../message-box";
+import { Timer } from './timer'
+import { BlinkingRecordIcon } from './blinking-record-icon'
 
 const Container = styled.View`
  flex-direction: column;
@@ -23,7 +25,10 @@ const Container = styled.View`
 `
 
 const PlayerContainer = styled.View`
-  flex: 1
+  flex: 1;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 `
 
 const DeleteButton = styled(BorderlessButton)`
@@ -92,11 +97,7 @@ const RecordingPanel = styled.View`
       background-color: #ffffff;
 `
 
-const RecordActiveRedIcon = styled.View`
-      width: 12px;
-      height: 12px;
-      border-radius: 6px;
-      background-color: red;
+const RecordActiveRedIcon = styled(BlinkingRecordIcon)`
       margin-left: 16px;
       margin-right: 4px;
 `
@@ -149,6 +150,24 @@ const TimerText = styled.Text`
       min-width: 60px;
 `
 
+const RecordTimer = styled(Timer)`
+    min-width: 80px;
+`
+const TotalPlaybackTime = styled(Timer)`
+  min-width: 65px;
+`
+const CurrentPlaybackTime = styled(Timer)`
+   min-width: 65px;
+`
+
+const PlaybackTimersContainer = styled.View`
+  min-width: 140px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`
+
+
 const RecordingButtonIconImage = styled.Image`
   width: 32px;
   height: 32px;
@@ -186,7 +205,9 @@ enum StatusEnum {
 
 
 export interface VoiceRecordControlProps {
-  onSendMessage: (message: VoiceMessage) => void
+  onSendMessage: (message: VoiceMessage) => void;
+  onActive?: () => void
+  onPassive?: () => void
 }
 
 interface State {
@@ -267,7 +288,6 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
         return true;
       },
     });
-    this.millsToTime = this.millsToTime.bind(this);
     this._askForPermissions = this._askForPermissions.bind(this);
     this._cancelRecording = this._cancelRecording.bind(this);
     this._stopPlaybackAndBeginRecording = this._stopPlaybackAndBeginRecording.bind(this)
@@ -279,6 +299,7 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
     this.handleSendMessage = this.handleSendMessage.bind(this);
     this.play = this.play.bind(this)
     this.pause = this.pause.bind(this)
+    this.isRecordingPanelVisible = this.isRecordingPanelVisible.bind(this);
   }
   _panResponder;
   recording: Audio.Recording = null
@@ -286,7 +307,6 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
   queue = new Queue()
 
   emitUserAction(userAction: UserActionEnum){
-    // console.log('emit user action', userAction)
     if(this.state.userAction!=userAction){
       this.setState({ userAction, prevUserAction: this.state.userAction });
     }
@@ -335,6 +355,7 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
 
     await recording.prepareToRecordAsync(this.recordingSettings);
     recording.setOnRecordingStatusUpdate(this._updateScreenForRecordingStatus);
+    recording.setProgressUpdateInterval(100)
 
     this.recording = recording;
     await this.recording.startAsync(); // Will call this._updateScreenForRecordingStatus to update the screen.
@@ -430,12 +451,6 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
       this._updateScreenForSoundStatus
     );
     this.sound = sound;
-  }
-
-  millsToTime(duration:number): { m: number; s:number  } {
-    const seconds = (duration / 1000) >> 0
-    const minutes = (seconds / 60) >> 0;
-    return { m: minutes, s: seconds - minutes * 60 }
   }
 
   componentDidUpdate(prevProps: VoiceRecordControlProps, prevState: State){
@@ -535,8 +550,19 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
     }))
 
   }
+  isRecordingPanelVisible(){
+    if(this.state.status === StatusEnum.RECORDING ||
+      this.state.status === StatusEnum.RECORDING_LOCKED ||
+      this.state.status === StatusEnum.READY_FOR_PLAYBACK ||
+      this.state.status === StatusEnum.PLAY ||
+      this.state.status === StatusEnum.PAUSE){
+      this.props.onActive && this.props.onActive()
+      return true
+    }
+    this.props.onPassive && this.props.onPassive();
+    return false
+  }
   render(){
-    const { m, s } = this.millsToTime(this.state.recordingDuration)
     return  <Container
       {...(
         this.state.status !== StatusEnum.READY_FOR_PLAYBACK &&
@@ -548,11 +574,7 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
     >
       <IconImage source={voiceIcon} />
 
-      {(this.state.status === StatusEnum.RECORDING ||
-        this.state.status === StatusEnum.RECORDING_LOCKED ||
-        this.state.status === StatusEnum.READY_FOR_PLAYBACK ||
-        this.state.status === StatusEnum.PLAY ||
-        this.state.status === StatusEnum.PAUSE) &&
+      {this.isRecordingPanelVisible() &&
       <RecordingPanel>
         {this.state.status === StatusEnum.READY_FOR_PLAYBACK ||
         this.state.status === StatusEnum.PLAY ||
@@ -579,6 +601,13 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
                 playIcon : pauseIcon
               }/>
             </PlayPauseButton>
+
+            <PlaybackTimersContainer>
+            <CurrentPlaybackTime time={this.state.soundPosition}/>
+            <Text>/</Text>
+            <TotalPlaybackTime time={this.state.soundDuration}/>
+            </PlaybackTimersContainer>
+
           </PlayerContainer>
 
           <SendButton onPress={this.handleSendMessage}>
@@ -590,8 +619,8 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
           :
           <Fragment>
             <RecordActiveRedIcon/>
-
-            <TimerText>{m}:{s}</TimerText>
+              <RecordTimer time={this.state.recordingDuration}/>
+            {/*<TimerText>{m}:{s}</TimerText>*/}
             {this.state.status === StatusEnum.RECORDING_LOCKED ?
               <CancelButton onPress={(e) => {
                 this.setState({ status: StatusEnum.CANCEL_RECORDING })
