@@ -218,7 +218,7 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
     this.state = {
       userAction: UserActionEnum.NOTHING,
       prevUserAction: UserActionEnum.NOTHING,
-      animatedActiveButtonY: new Animated.Value(ACTIVE_BUTTON_TOP),
+      animatedActiveButtonY: new Animated.Value(0),
       status: StatusEnum.READY_FOR_RECORD,
       pressed: false,
       locked: false,
@@ -613,7 +613,7 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
       <RecordingActiveButtonContainer style={{
         top: this.state.animatedActiveButtonY.interpolate({
           inputRange: [0,150],
-          outputRange: [ -48, 102]
+          outputRange: [ 0 + ACTIVE_BUTTON_TOP, 150 + ACTIVE_BUTTON_TOP]
         })
       }}>
         <RecordingActiveButton onPress={()=>{
