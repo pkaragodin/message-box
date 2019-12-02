@@ -21,7 +21,6 @@ import {ImageMessageInterface, VideoMessageInterface} from "../message-box";
 const Container = styled.View`
  flex-direction: column;
  justify-content: flex-end;
- z-index: 100000;
 `
 
 const Button = styled(BorderlessButton)``
@@ -78,13 +77,13 @@ export interface PickerControlProps {
 
 export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
 
-  const selectPanelRef = useRef<SlidingUpPanel>();
+  //const selectPanelRef = useRef<SlidingUpPanel>();
   const [isSelectPanelVisible, setIsSelectPanelVisible] = useState(false);
   useEffect(()=>{
     if(isSelectPanelVisible){
-      selectPanelRef.current.show(176)
+  //    selectPanelRef.current.show(176)
     } else {
-      selectPanelRef.current.hide();
+    //  selectPanelRef.current.hide();
     }
   },[isSelectPanelVisible])
   const handleToggleSelectPanel = () =>
@@ -145,12 +144,12 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
             <Button onPress={handleToggleSelectPanel}>
               <IconImage source={attachIcon}/>
             </Button>
-             <SelectPanel ref={selectPanelRef}
+            {/* <SelectPanel ref={selectPanelRef}
                           isVisible={isSelectPanelVisible}
                    onRequestCameraRoll={handlePickCameraRoll}
                    onRequestCamera={handlePickCamera}
                    onRequestToggleSelectPanel={handleToggleSelectPanel}
-             />
+             />*/}
           </Container>
   )
 }

@@ -93,9 +93,9 @@ const RecordingPanel = styled.View`
 `
 
 const RecordActiveRedIcon = styled.View`
-      width: 16px;
-      height: 16px;
-      border-radius: 8px;
+      width: 12px;
+      height: 12px;
+      border-radius: 6px;
       background-color: red;
       margin-left: 16px;
       margin-right: 4px;
@@ -185,14 +185,6 @@ enum StatusEnum {
 }
 
 
-const  askForPermissions = async () => {
-  const response = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
-  if(response.status === 'granted'){
-    return;
-  }
-  throw new Error('Permission not granted')
-}
-
 export interface VoiceRecordControlProps {
   onSendMessage: (message: VoiceMessage) => void
 }
@@ -247,7 +239,6 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
         this.emitUserAction(UserActionEnum.TOUCH_START)
       },
       onPanResponderMove: (evt, gestureState) => {
-        // this.state.animatedActiveButtonY.setOffset(gestureState.moveY)
         if(Math.abs(gestureState.dx) > 150){
           this.emitUserAction(UserActionEnum.SWIPE_LEFT)
         }
@@ -269,22 +260,10 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
        this.emitUserAction(UserActionEnum.TOUCH_RELEASE);
-        // The user has released all touches while this view is the
-        // responder. This typically means a gesture has succeeded
-       /* Animated.timing(this.state.animatedActiveButtonY, {
-          toValue: 0,
-          duration: 50,
-        }).start();*/
       },
       onPanResponderTerminate: (evt, gestureState) => {
-        //console.log('nPanResponderTerminate',evt)
-        // Another component has become the responder, so this gesture
-        // should be cancelled
       },
       onShouldBlockNativeResponder: (evt, gestureState) => {
-        //console.log('onShouldBlockNativeResponder',evt)
-        // Returns whether this component should block native components from becoming the JS
-        // responder. Returns true by default. Is currently only supported on android.
         return true;
       },
     });
@@ -307,7 +286,7 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
   queue = new Queue()
 
   emitUserAction(userAction: UserActionEnum){
-    console.log('emit user action', userAction)
+    // console.log('emit user action', userAction)
     if(this.state.userAction!=userAction){
       this.setState({ userAction, prevUserAction: this.state.userAction });
     }
@@ -431,14 +410,10 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
       return;
     }
 
-   /* const info = await FileSystem.getInfoAsync(this.recording.getURI());
-    console.log(`FILE INFO: ${JSON.stringify(info)}`);
-    */
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
       playsInSilentModeIOS: true,
-      // playsInSilentLockedModeIOS: true,
       shouldDuckAndroid: true,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
       playThroughEarpieceAndroid: false,
@@ -456,7 +431,6 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
     );
     this.sound = sound;
   }
-
 
   millsToTime(duration:number): { m: number; s:number  } {
     const seconds = (duration / 1000) >> 0
@@ -549,7 +523,6 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
   }
   async handleSendMessage(){
      const info = await FileSystem.getInfoAsync(this.recording.getURI());
-    // console.log(`FILE INFO: ${JSON.stringify(info)}`);
     this.props.onSendMessage && this.props.onSendMessage({
       type: MessageType.VOICE,
       uri: info.uri,
@@ -571,7 +544,7 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
         this.state.status !== StatusEnum.PAUSE &&
         this.state.status !== StatusEnum.RECORDING_LOCKED
         && this._panResponder.panHandlers)}
-      style={{ zIndex: this.state.status!== StatusEnum.READY_FOR_RECORD && 1000000 }}
+      style={{ zIndex: this.state.status!== StatusEnum.READY_FOR_RECORD? 1000000: undefined }}
     >
       <IconImage source={voiceIcon} />
 
@@ -658,7 +631,6 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
         <StopIconImage source={stopIcon}/>
       </StopButton>
       }
-
     </Container>
   }
 }
