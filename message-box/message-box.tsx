@@ -1,6 +1,6 @@
 import React,{ useState, useRef } from 'react';
 import {
-  StyleSheet, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard
+  StyleSheet, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, View
 } from 'react-native';
 
 
@@ -25,6 +25,7 @@ const MessageTextInput = styled.TextInput`
   padding-bottom: 16px;
   font-size: 14px;
   line-height: 16px;
+  min-height: 48px;
 `
 
 const IconContainer = styled.View`
@@ -51,12 +52,14 @@ export interface BaseMessageInterface {
 }
 
 export interface ImageMessageInterface extends BaseMessageInterface{
+  type: MessageType.IMAGE
   width: number;
   height:number;
   uri: string;
 }
 
 export interface VideoMessageInterface extends BaseMessageInterface{
+  type: MessageType.VIDEO
   width: number;
   height:number;
   uri: string;
@@ -64,7 +67,14 @@ export interface VideoMessageInterface extends BaseMessageInterface{
 }
 
 export interface TextMessageInterface extends BaseMessageInterface {
+  type: MessageType.TEXT
   text: string
+}
+
+export interface VoiceMessage extends BaseMessageInterface{
+  type: MessageType.VOICE
+  uri: string;
+  duration: number;
 }
 
 
@@ -88,6 +98,7 @@ export const MessageBox: React.FC<MessageBoxProps> = ({ onSendMessage }) => {
   return <KeyboardAvoidingView
     behavior="position"
     style={styles.container}
+    //keyboardVerticalOffset={0}
     contentContainerStyle={styles.contentContainer}
     enabled>
 
@@ -109,7 +120,7 @@ export const MessageBox: React.FC<MessageBoxProps> = ({ onSendMessage }) => {
         </IconContainer>
       </TouchableWithoutFeedback>
       :
-      <VoiceRecordControl/>
+      <VoiceRecordControl onSendMessage={onSendMessage}/>
     }
   </KeyboardAvoidingView>
 
@@ -117,10 +128,12 @@ export const MessageBox: React.FC<MessageBoxProps> = ({ onSendMessage }) => {
 
 const styles = StyleSheet.create({
   container:{
-    width: '100%'
+    width: '100%',
+
   },
   contentContainer: {
     flexDirection:'row',
-    backgroundColor:'#ffffff'
+    backgroundColor:'#ffffff',
+    zIndex: 10000,
   }
 })

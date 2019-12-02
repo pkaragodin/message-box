@@ -31,6 +31,7 @@ export interface SelectPanelProps {
   onRequestToggleSelectPanel: () => void
   onRequestCamera: () => void
   onRequestCameraRoll: () => void
+  isVisible?: boolean;
 }
 export const SelectPanel:React.FC<SelectPanelProps> =
   React.forwardRef<SlidingUpPanel, SelectPanelProps>((props, ref) => (
@@ -38,6 +39,7 @@ export const SelectPanel:React.FC<SelectPanelProps> =
       ref={ref}
       height={176}
       showBackdrop={false}
+      draggableRange={!props.isVisible ? { top: 0, bottom: 0}: undefined}
       friction={0.3}
       allowDragging={false}
     >

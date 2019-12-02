@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef, RefForwardingComponent, ForwardRefExoticComponent} from 'react';
 
-import { TouchableWithoutFeedback } from 'react-native';
+import {TouchableWithoutFeedback, View} from 'react-native';
 
 
 import styled from "styled-components/native";
@@ -8,6 +8,8 @@ import styled from "styled-components/native";
 import SlidingUpPanel from 'rn-sliding-up-panel';
 
 import { SelectPanel } from './select-panel'
+
+import {BorderlessButton} from 'react-native-gesture-handler';
 
 import {attachIcon} from "../assets";
 
@@ -19,7 +21,10 @@ import {ImageMessageInterface, VideoMessageInterface} from "../message-box";
 const Container = styled.View`
  flex-direction: column;
  justify-content: flex-end;
+ z-index: 100000;
 `
+
+const Button = styled(BorderlessButton)``
 
 const IconImage = styled.Image`
   width: 32px;
@@ -136,16 +141,17 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
   },[pickingCameraRoll, cameraRollPermissionGranted])
   const handlePickCameraRoll = () => setPickingCameraRoll(true)
 
-  return (<TouchableWithoutFeedback onPress={handleToggleSelectPanel}>
-          <Container style={{ zIndex: isSelectPanelVisible && 100000}}>
-            <IconImage source={attachIcon}/>
-            <SelectPanel ref={selectPanelRef}
-                         onRequestCameraRoll={handlePickCameraRoll}
-                         onRequestCamera={handlePickCamera}
-                         onRequestToggleSelectPanel={handleToggleSelectPanel}
-            />
+  return (<Container>
+            <Button onPress={handleToggleSelectPanel}>
+              <IconImage source={attachIcon}/>
+            </Button>
+             <SelectPanel ref={selectPanelRef}
+                          isVisible={isSelectPanelVisible}
+                   onRequestCameraRoll={handlePickCameraRoll}
+                   onRequestCamera={handlePickCamera}
+                   onRequestToggleSelectPanel={handleToggleSelectPanel}
+             />
           </Container>
-        </TouchableWithoutFeedback>
   )
 }
 

@@ -2,8 +2,11 @@ const arrowRightIcon = require('./arrow-right-icon_light.png')
 const voiceIcon = require('./voice-icon_light.png')
 const attachIcon = require('./attach-icon_light.png')
 const sendIcon = require('./sent-icon_light.png');
-const sendIconWhite = require('./sent-icon-white_light.png');
+const sendIconWhite = require('./send-icon-white_light.png');
 const stopIcon = require('./stop-icon_light.png')
+const deleteIcon = require('./delete-icon_light.png')
+const playIcon = require('./play-icon_light.png')
+const pauseIcon = require('./pause-icon_light.png')
 
 export {
   arrowRightIcon,
@@ -11,5 +14,8 @@ export {
   attachIcon,
   sendIcon,
   stopIcon,
-  sendIconWhite
+  sendIconWhite,
+  deleteIcon,
+  playIcon,
+  pauseIcon
 }

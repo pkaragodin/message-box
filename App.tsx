@@ -3,11 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import styled from 'styled-components/native';
 
 
-/*
 if(__DEV__) {
   import('./ReactotronConfig').then(() => console.log('Reactotron Configured'))
 }
-*/
 
 import MessageBox from './message-box'
 
@@ -35,11 +33,12 @@ export default function App() {
       </Text>
       }
 
-      <View style={{ flex: 1 }}/>
+      <View style={{ flex: 1 }} />
+
       <MessageBox onSendMessage={(message => {
-        console.log('send message', message);
         setMessage(message);
       })}/>
+
     </Container>
   );
 }
