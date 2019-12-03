@@ -13,7 +13,7 @@ import { VoiceRecordControl } from './voice-record-control'
 import { PickerControl  } from './picker-control'
 import {sendIcon, sendIconWhite} from "./assets";
 import {BorderlessButton} from "react-native-gesture-handler";
-
+import { GiphyControl } from './giphy-control'
 
 
 const Container = styled.View`
@@ -175,6 +175,9 @@ export const MessageBox: React.FC<MessageBoxProps> = ({ onSendMessage }) => {
         onChangeText={setMessageText}
         value={messageText}
       /> : <View style={{ flex: 1}}/>}
+
+      {messageText.length === 0 && <GiphyControl/> }
+
 
     <ButtonContainer>
     {messageText.length > 0 ?

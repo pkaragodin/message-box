@@ -44,14 +44,13 @@ export interface SelectPanelProps {
 
 export const SelectPanel: React.FC<SelectPanelProps> = (props) =>
   <BottomModal
-    animationIn="snake"
     visible={props.isVisible}
     swipeDirection="down" // can be string or an array
     swipeThreshold={80} // default 100
     onSwipeOut={(event) => {
       props.onRequestToggleSelectPanel && props.onRequestToggleSelectPanel()
     }}
-    height={176}
+    height={panelHeight}
     modalAnimation={new SlideAnimation({
       slideFrom: 'bottom',
     })}

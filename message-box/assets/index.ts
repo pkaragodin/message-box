@@ -7,6 +7,7 @@ const stopIcon = require('./stop-icon_light.png')
 const deleteIcon = require('./delete-icon_light.png')
 const playIcon = require('./play-icon_light.png')
 const pauseIcon = require('./pause-icon_light.png')
+const giphyIcon = require('./giphy-icon_light.png')
 
 export {
   arrowRightIcon,
@@ -17,5 +18,6 @@ export {
   sendIconWhite,
   deleteIcon,
   playIcon,
-  pauseIcon
+  pauseIcon,
+  giphyIcon
 }

@@ -5,8 +5,6 @@ import {TouchableWithoutFeedback, View} from 'react-native';
 
 import styled from "styled-components/native";
 
-import SlidingUpPanel from 'rn-sliding-up-panel';
-
 import { SelectPanel } from './select-panel'
 
 import {BorderlessButton} from 'react-native-gesture-handler';
@@ -76,16 +74,7 @@ export interface PickerControlProps {
 }
 
 export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
-
-  //const selectPanelRef = useRef<SlidingUpPanel>();
   const [isSelectPanelVisible, setIsSelectPanelVisible] = useState(false);
-  useEffect(()=>{
-    if(isSelectPanelVisible){
-  //    selectPanelRef.current.show(176)
-    } else {
-    //  selectPanelRef.current.hide();
-    }
-  },[isSelectPanelVisible])
   const handleToggleSelectPanel = () => {
     setIsSelectPanelVisible(false)
     setIsSelectPanelVisible(!isSelectPanelVisible)
@@ -105,7 +94,7 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
       })
     }
     if(pickingCamera && cameraPermissionGranted) {
-
+      setIsSelectPanelVisible(false)
       launchCamera().then(result => {
         !result.cancelled && onPicked && onPicked(result as Message)
       }).catch(e => {
@@ -117,7 +106,7 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
   },[pickingCamera, cameraPermissionGranted])
 
   const handlePickCamera = async () => {
-    setIsSelectPanelVisible(false)
+
     setPickingCamera(true)
   }
 
@@ -136,7 +125,7 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
       })
     }
     if(pickingCameraRoll && cameraRollPermissionGranted) {
-      //setIsSelectPanelVisible(false)
+      setIsSelectPanelVisible(false)
       launchImageLibrary().then(result => {
         !result.cancelled && onPicked && onPicked(result as Message)
       }).catch(e => {
@@ -148,7 +137,7 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
   },[pickingCameraRoll, cameraRollPermissionGranted])
 
   const handlePickCameraRoll = async () => {
-    setIsSelectPanelVisible(false)
+
     setPickingCameraRoll(true)
   }
 
@@ -157,11 +146,10 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
               <IconImage source={attachIcon}/>
             </Button>
              <SelectPanel
-               // ref={selectPanelRef}
-                          isVisible={isSelectPanelVisible}
-                   onRequestCameraRoll={handlePickCameraRoll}
-                   onRequestCamera={handlePickCamera}
-                   onRequestToggleSelectPanel={handleToggleSelectPanel}
+               isVisible={isSelectPanelVisible}
+               onRequestCameraRoll={handlePickCameraRoll}
+               onRequestCamera={handlePickCamera}
+               onRequestToggleSelectPanel={handleToggleSelectPanel}
              />
           </Container>
   )
