@@ -1,6 +1,6 @@
 import React from "react";
-import SlidingUpPanel from "rn-sliding-up-panel";
-import { Dimensions, Text, View, Modal, TouchableWithoutFeedback} from "react-native";
+import { Dimensions, Text, View, TouchableWithoutFeedback} from "react-native";
+import Modal, { SlideAnimation, ModalContent, BottomModal } from 'react-native-modals';
 import styled from "styled-components/native";
 
 
@@ -36,7 +36,6 @@ const Container = styled.View`
 `
 
 export interface SelectPanelProps {
- // ref: React.Ref<SlidingUpPanel>
   onRequestToggleSelectPanel: () => void
   onRequestCamera: () => void
   onRequestCameraRoll: () => void
@@ -44,10 +43,18 @@ export interface SelectPanelProps {
 }
 
 export const SelectPanel: React.FC<SelectPanelProps> = (props) =>
-  <Modal
-    animationType="slide"
-    transparent={true}
+  <BottomModal
+    animationIn="snake"
     visible={props.isVisible}
+    swipeDirection="down" // can be string or an array
+    swipeThreshold={80} // default 100
+    onSwipeOut={(event) => {
+      props.onRequestToggleSelectPanel && props.onRequestToggleSelectPanel()
+    }}
+    height={176}
+    modalAnimation={new SlideAnimation({
+      slideFrom: 'bottom',
+    })}
     hardwareAccelerated={true}
   >
     <Container>
@@ -69,7 +76,7 @@ export const SelectPanel: React.FC<SelectPanelProps> = (props) =>
       </ButtonTouchable>
     </PanelContent>
     </Container>
-  </Modal>
+  </BottomModal>
 /*
 export const SelectPanel:React.FC<SelectPanelProps> =
   React.forwardRef<SlidingUpPanel, SelectPanelProps>((props, ref) => (

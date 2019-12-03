@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
 import styled from 'styled-components/native';
 
 
@@ -32,9 +32,7 @@ export default function App() {
         {JSON.stringify(message, null, 2)}
       </Text>
       }
-
-      <View style={{ flex: 1 }} />
-
+      <View style={{ flex: 1 }}/>
       <MessageBox onSendMessage={(message => {
         setMessage(message);
       })}/>

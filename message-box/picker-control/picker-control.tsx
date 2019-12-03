@@ -118,7 +118,6 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
 
   const handlePickCamera = async () => {
     setIsSelectPanelVisible(false)
-    await new Promise((resolve => setTimeout(()=>resolve(), 0)))
     setPickingCamera(true)
   }
 
@@ -150,9 +149,6 @@ export const PickerControl: React.FC<PickerControlProps> = ({ onPicked }) => {
 
   const handlePickCameraRoll = async () => {
     setIsSelectPanelVisible(false)
-    // вероятно грязный хак но возникает какая-то коллизия при скрытии
-    // модалки селектора и модалки камеры/библиотеки картинок
-    await new Promise((resolve => setTimeout(()=>resolve(), 0)))
     setPickingCameraRoll(true)
   }
 

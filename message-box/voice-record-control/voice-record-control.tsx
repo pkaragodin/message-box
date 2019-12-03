@@ -548,7 +548,6 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
         resolve()
       })
     }))
-
   }
   isRecordingPanelVisible(){
     if(this.state.status === StatusEnum.RECORDING ||
@@ -593,7 +592,6 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
               } else {
                 this.setState({ status: StatusEnum.PLAY})
               }
-
             }}>
               <IconImage source={
                 this.state.status === StatusEnum.READY_FOR_PLAYBACK ||
@@ -620,7 +618,6 @@ export class VoiceRecordControl extends React.PureComponent<VoiceRecordControlPr
           <Fragment>
             <RecordActiveRedIcon/>
               <RecordTimer time={this.state.recordingDuration}/>
-            {/*<TimerText>{m}:{s}</TimerText>*/}
             {this.state.status === StatusEnum.RECORDING_LOCKED ?
               <CancelButton onPress={(e) => {
                 this.setState({ status: StatusEnum.CANCEL_RECORDING })
